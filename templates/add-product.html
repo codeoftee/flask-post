@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add product</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.css') }}">
+    <script src="{{ url_for('static', filename='assets/js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/bs/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/index.js') }}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="text-center">
+        <h4>Add New Product</h4>
+        <form method="post" action="http://localhost:5000/add-product">
+            <div class="form-group">
+                <input type="text" name="title" max="100" class="form-control" placeholder="Enter Title">
+            </div>
+            <div class="form-group">
+                <input type="number" inputmode="numeric" name="price" class="form-control" placeholder="Enter price">
+            </div>
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
