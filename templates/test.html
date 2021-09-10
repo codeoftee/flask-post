@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <style>
+        body{
+            padding-left: 50px;
+        }
+    </style>
+</head>
+<body>
+<h1>Test Page</h1>
+<h4>{{ em }}</h4>
+
+{% if show_users == 'yes' %}
+<ol>
+    {% for user in profiles%}
+    <li>{{ user.name }} - {{ user['age'] }}</li>
+    {% endfor %}
+</ol>
+    {% else %}
+    <p>Users are hidden</p>
+{% endif %}
+<ul>
+    {% for fruit in friuts %}
+    <li>{{ fruit }}</li>
+    {% endfor %}
+</ul>
+</body>
+</html>
