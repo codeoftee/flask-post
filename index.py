@@ -1,7 +1,19 @@
 # flask project
-from flask import Flask, render_template, request, redirect, url_for
+from datetime import timedelta
+
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from config import Config
+import hashlib
 
 app = Flask(__name__)
+app.config.from_object(Config)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+from models import User, Product
+
 products = []
 name = 'Tola'
 email = 'tola@pediforte.com'
@@ -68,3 +80,34 @@ def get_user(uid):
     uid = int(uid)
     profile = users[uid]
     return render_template('profile.html', profile=profile)
+
+
+@app.route('/success')
+def success():
+    return render_template('success.html')
+
+
+@app.route('/sign-up', methods=['POST', 'GET'])
+def sign_up():
+    if request.method == 'GET':
+        return render_template('sign-up.html')
+    else:
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+
+        password_hash = hashlib.sha256(password.encode())
+        # the hash string is in hexdigest()
+        pw_hash = password_hash.hexdigest()
+        user = User(username=username, email=email, password_hash=pw_hash)
+        db.session.add(user)
+        db.session.commit()
+        # python sessions https://pythonbasics.org/flask-sessions/
+        session['username'] = username
+        session['email'] = email
+        resp = redirect(url_for('success'))
+        # python sessions https://pythonbasics.org/flask-cookies/
+        resp.set_cookie('username', username, max_age=timedelta(hours=24))
+        resp.set_cookie('password', pw_hash, max_age=timedelta(hours=24))
+        return resp
+
