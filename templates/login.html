@@ -8,6 +8,7 @@
 
     <!-- Favicons -->
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/login.css') }}">
     <script src="{{ url_for('static', filename='assets/js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/js/bs/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/js/index.js') }}"></script>
@@ -30,24 +31,32 @@
             }
         }
     </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="signin.css" rel="stylesheet">
 </head>
 <body class="text-center">
 
 <main class="form-signin">
-    <form>
-        <img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
+    <form method="post" action="http://localhost:5000/login">
+        <img class="mb-4" src="https://getbootstrap.com/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
+        <!-- Error message block -->
+            <div class="text-center">
+                <div style="color: red; margin: 5px">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <b>{{ message }}</b>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            </div>
+            <!-- Error message block end-->
         <div class="form-floating">
-            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-            <label for="floatingInput">Email address</label>
+            <input type="text" name="username" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput">Username</label>
         </div>
         <div class="form-floating">
-            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
             <label for="floatingPassword">Password</label>
         </div>
 
