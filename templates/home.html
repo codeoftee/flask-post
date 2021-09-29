@@ -10,15 +10,22 @@
 </head>
 <body>
 <div class="container">
-    <a href="/sign-up">Click here to register</a>
+    {% if user %}
+        <h1>Welcome {{ user.username }}</h1>
+        <p style="margin: 0 0 20px 0">You are logged in as {{ user.email }}</p>
+        <p style="margin: 0 0 20px 0">Your account was created on {{ user.joined }}</p>
 
-    <h1>Welcome Home {{ name }}</h1>
-<p>This is the home template for your email {{ email }}</p>
-<a href="/about">Click here for about page</a> <br/>
-<a href="/products">Click here for product page</a> <br/>
+    {% else %}
+        <h1>Welcome Home</h1>
+        <a href="/login">Please login to continue</a>
+
+    {% endif %}
+
+    <p>This is the home template for your email</p>
+    <a href="/about">Click here for about page</a> <br/>
+    <a href="/products">Click here for product page</a> <br/>
     <img src="{{ url_for('static', filename='assets/img/qr-code.svg') }}" style="width: 200px; margin: 10px">
     <img src="{{ url_for('static', filename='assets/img/babatee.webp') }}" style="width: 200px; margin: 40px">
-<button class="btn btn-primary" onclick="clicked()">Click Here</button>
 </div>
 </body>
 </html>

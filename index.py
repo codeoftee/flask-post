@@ -4,6 +4,7 @@ from datetime import timedelta
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+
 from config import Config
 import hashlib
 
@@ -13,40 +14,16 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from models import User, Product
-
-products = []
-name = 'Tola'
-email = 'tola@pediforte.com'
-users = [
-    {
-        'name': 'Carlos Denver',
-        'age': 54,
-        'nationality': 'Mexican',
-        'email': 'carlos@pediforte.com',
-        'id': 0
-    },
-    {
-        'name': 'Messi Cross',
-        'age': 24,
-        'nationality': 'Spanish',
-        'email': 'messi@pediforte.com',
-        'id': 1
-    }
-]
-
-
-@app.route('/test')
-def test_page():
-    email = 'tola@pediforte.com'
-    fruits = ['Apple', 'Mango', 'Orange', 'Pineapple']
-    show_users = 'yes'
-    return render_template('test.html', em=email, friuts=fruits,
-                           profiles=users, show_users=show_users)
+from app_functions import check_login
 
 
 @app.route('/')
 def homepage():
-    return render_template('home.html', name=name, email=email)
+    user = check_login()
+    if user is None:
+        return redirect(url_for('login'))
+
+    return render_template('home.html', user=user)
 
 
 @app.route('/about')
@@ -56,17 +33,14 @@ def about_page():
 
 @app.route('/products/')
 def product_page():
-    return render_template('all_products.html', products=products)
+    return render_template('all_products.html')
 
 
 @app.route('/add-product', methods=['POST'])
 def add_product():
     title = request.form['title']
     price = request.form['price']
-    products.append(
-        {'title': title, 'price': price,
-         'image': 'https://picsum.photos/seed/' + title + '/200/200'}
-    )
+
     return redirect(url_for('product_page'))
 
 
@@ -75,16 +49,10 @@ def add_product_page():
     return render_template('add-product.html')
 
 
-@app.route('/profile/<uid>')
-def get_user(uid):
-    uid = int(uid)
-    profile = users[uid]
-    return render_template('profile.html', profile=profile)
-
-
 @app.route('/success')
 def success():
-    return render_template('success.html')
+    user = check_login()
+    return render_template('success.html', user=user)
 
 
 @app.route('/sign-up', methods=['POST', 'GET'])
