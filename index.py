@@ -83,7 +83,7 @@ def sign_up():
             session['email'] = email
             resp = redirect(url_for('success'))
             # python sessions https://pythonbasics.org/flask-cookies/
-            resp.set_cookie('username', username, max_age=timedelta(hours=24))
+            resp.set_cookie('id', user.id, max_age=timedelta(hours=24))
             resp.set_cookie('password', pw_hash, max_age=timedelta(hours=24))
             return resp
 
@@ -117,7 +117,7 @@ def login():
                 session['username'] = username
                 session['email'] = user.email
                 resp = redirect(url_for('homepage'))
-                resp.set_cookie('username', username, max_age=timedelta(hours=24))
+                resp.set_cookie('id', user.id, max_age=timedelta(hours=24))
                 resp.set_cookie('password', pw, max_age=timedelta(hours=24))
                 return resp
         flash('Invalid username or password!')

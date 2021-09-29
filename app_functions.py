@@ -13,6 +13,6 @@ def check_login():
         user = User.query.filter(User.email == session['email']).first()
         return user
     else:
-        username = request.cookies.get('username')
-        user = User.query.filter_by(username=username).first()
+        uid = request.cookies.get('id')
+        user = User.query.filter_by(id=uid).first()
         return user
