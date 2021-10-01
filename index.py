@@ -1,9 +1,11 @@
 # flask project
+import os
 from datetime import timedelta
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 
 from config import Config
 import hashlib
@@ -33,19 +35,46 @@ def about_page():
 
 @app.route('/products/')
 def product_page():
-    return render_template('all_products.html')
+    products = Product.query.all()
+    return render_template('all_products.html', products=products)
 
 
 @app.route('/add-product', methods=['POST'])
 def add_product():
+    user = check_login()
+    if user is None:
+        return redirect(url_for('login'))
     title = request.form['title']
     price = request.form['price']
+    category = request.form['category']
+    description = request.form['description']
+    # upload image
+    image = request.files['image']
+    if image is None or image.filename is None:
+        flash('Please select product image!')
+        return render_template('add-product.html')
+    print(image.filename)
+    filename = secure_filename(image.filename)
+    image.save(os.path.join(Config.UPLOADS_FOLDER, filename))
+    image = filename
+    product = Product(title=title, category=category,
+                      price=price, description=description,
+                      image=image)
+    try:
+        db.session.add(product)
+        db.session.commit()
+        flash('{} added successfully!'.format(title))
+        return redirect(url_for('product_page'))
+    except Exception as e:
+        flash('Processing error! {}'.format(e))
+        return render_template('add-product.html')
 
-    return redirect(url_for('product_page'))
 
-
-@app.route('/add-product-page')
+@app.route('/add-new-product')
 def add_product_page():
+    user = check_login()
+    if user is None:
+        return redirect(url_for('login'))
     return render_template('add-product.html')
 
 
@@ -117,8 +146,13 @@ def login():
                 session['username'] = username
                 session['email'] = user.email
                 resp = redirect(url_for('homepage'))
-                resp.set_cookie('id', user.id, max_age=timedelta(hours=24))
+                resp.set_cookie('id', str(user.id), max_age=timedelta(hours=24))
                 resp.set_cookie('password', pw, max_age=timedelta(hours=24))
                 return resp
         flash('Invalid username or password!')
         return render_template('login.html')
+
+
+@app.route('/uploads/<filename>')
+def view_file(filename):
+    return send_from_directory('static/uploads', filename)

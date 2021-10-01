@@ -18,6 +18,7 @@ class User(db.Model):
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     title = db.Column(db.String(100))
+    category = db.Column(db.String(100))
     price = db.Column(db.Numeric(10, 2))
     image = db.Column(db.Text)
     description = db.Column(db.Text)
