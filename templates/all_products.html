@@ -20,7 +20,7 @@
             <div class="row">
                 {% for product in products %}
                     <div class="col-4">
-                        <img src="{{ product.image }}">
+                        <img src="/uploads/{{ product.image }}" style="width: 140px">
                         <p>{{ product.title }}<br/>
                             <b>{{ product.price }}</b>
                         </p>
