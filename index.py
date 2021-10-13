@@ -156,3 +156,35 @@ def login():
 @app.route('/uploads/<filename>')
 def view_file(filename):
     return send_from_directory('static/uploads', filename)
+
+
+@app.route('/delete/<id>')
+def delete_product(id):
+    user = check_login()
+    if user is None:
+        return redirect(url_for('login'))
+    product = Product.query.filter_by(id=id).first()
+    if product is None:
+        flash('Product not found')
+        return redirect(url_for('product_page'))
+    db.session.delete(product)
+    db.session.commit()
+    flash('{} has been deleted successfully'.format(product.title))
+    return redirect(url_for('product_page'))
+
+
+@app.route('/edit/<id>')
+def edit_product(id):
+    user = check_login()
+    if user is None:
+        return redirect(url_for('login'))
+    product = Product.query.filter_by(id=id).first()
+    if product is None:
+        flash('Product not found')
+        return redirect(url_for('product_page'))
+    product.title = request.form['title']
+    product.category = request.form['category']
+    product.description = request.form['description']
+    db.session.commit()
+    flash('{} updated successfully'.format(product.title))
+    return redirect(url_for('product_page'))
