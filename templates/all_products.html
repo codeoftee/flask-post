@@ -12,6 +12,18 @@
 <body>
 <div class="container">
     <main>
+    <!-- Error message block -->
+            <div class="text-center">
+                <div style="color: red; margin: 5px">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <b>{{ message }}</b>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            </div>
         <div class="container">
         <div class="text-center">
             <h2 class="text-center">Products</h2>
@@ -25,6 +37,10 @@
                             <b>{{ product.price }}</b>
                         </p>
                         <button class="btn btn-primary">Buy Now</button>
+                        {% if user %}
+                            <a class="btn btn-secondary" href="/edit/{{ product.id }}">Edit</a>
+                            <a href="/delete/{{ product.id }}" class="btn btn-danger">Delete</a>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>

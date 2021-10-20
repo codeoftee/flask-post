@@ -36,7 +36,8 @@ def about_page():
 @app.route('/products/')
 def product_page():
     products = Product.query.all()
-    return render_template('all_products.html', products=products)
+    user = check_login()
+    return render_template('all_products.html', products=products, user=user)
 
 
 @app.route('/add-product', methods=['POST'])
@@ -101,6 +102,10 @@ def sign_up():
         elif email == '':
             flash('Please enter email')
         else:
+            exists = User.query.filter_by(email=email).first()
+            if exists is not None:
+                flash('Email address used for another account.')
+                return render_template('sign-up.html')
             password_hash = hashlib.sha256(password.encode())
             # the hash string is in hexdigest()
             pw_hash = password_hash.hexdigest()
@@ -173,7 +178,7 @@ def delete_product(id):
     return redirect(url_for('product_page'))
 
 
-@app.route('/edit/<id>')
+@app.route('/edit/<id>', methods=['GET', 'POST'])
 def edit_product(id):
     user = check_login()
     if user is None:
@@ -182,6 +187,9 @@ def edit_product(id):
     if product is None:
         flash('Product not found')
         return redirect(url_for('product_page'))
+    if request.method == 'GET':
+        return render_template('edit.html', product=product)
+
     product.title = request.form['title']
     product.category = request.form['category']
     product.description = request.form['description']
